@@ -9,7 +9,7 @@ RUN mkdir -p ~/Downloads ~/Applications \
     && ./Obsidian-1.7.7.AppImage --appimage-extract \
     && mv squashfs-root ~/Applications/Obsidian \
     && rm -f Obsidian-1.7.7.AppImage \
-    && echo "exec ~/Applications/Obsidian/AppRun" > ~/.config/i3/config
+    && echo "exec ~/Applications/Obsidian/obsidian --no-sandbox" >> ~/.config/i3/config
 
 USER root
 # ensure to become root for systemd
