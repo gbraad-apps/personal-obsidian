@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # clean workspace folder
-rm -rf /workspaces/obsidian
-mkdir /workspaces/obsidian
-ln -s /workspaces/obsidian ~/Projects
-git init /workspaces/obsidian
+rm -rf /workspaces/private-obsidian
+mkdir /workspaces/private-obsidian
+ln -s /workspaces/private-obsidian ~/Projects
+git init /workspaces/private-obsidian
 
 cd ~
 
