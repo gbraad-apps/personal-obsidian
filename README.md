@@ -11,7 +11,7 @@ Obsidian for private (remote) use
 
 ```
 $ podman run -d --name obsidian ghcr.io/gbraad-apps/obsidian:latest
-$ podman exec -it obsidian tailscale up
+$ podman exec obsidian tailscale up
 $ podman exec obsidian tailscale ip
 ```
 
