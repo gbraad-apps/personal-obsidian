@@ -10,11 +10,8 @@ Obsidian for private (remote) use
 
 ```
 $ podman run -d --name obsidian ghcr.io/gbraad-apps/obsidian:latest
-$ podman exec -it obsidian su - gbraad
-$ kasmvncserver 
-$ sudo systemctl enable --now tailscaled
-$ sudo tailscale up
-$ tailscale ip
+$ podman exec -it obsidian tailscale up
+$ podman exec obsidian tailscale ip
 ```
 
 ... and then open `https://[tailscale_ip]:8444`
