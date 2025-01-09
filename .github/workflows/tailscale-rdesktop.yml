@@ -12,12 +12,12 @@ jobs:
           podman run -d --name rdesktop ghcr.io/gbraad-apps/obsidian:latest
       - name: Tailscale setup (root)
         run: |
-          until podman exec rdesktop tailscale up --auth-key ${TAILSCALE_AUTHKEY}
+          until podman exec rdesktop tailscale up --auth-key ${TAILSCALE_AUTHKEY} --hostname github-${HOSTNAME}
           do
               sleep 0.1
           done
           podman exec rdesktop tailscale set --ssh
-          podman exec rdesktop tailscale set --hostname github-${HOSTNAME}
+          podman exec rdesktop chmod 640 /etc/shadow
         env:
           TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY}}
       - name: Hang around
