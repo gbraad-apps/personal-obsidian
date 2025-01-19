@@ -4,6 +4,10 @@
     "runArgs": [ "--cap-add=NET_ADMIN", "--cap-add=NET_RAW", "--device=/dev/net/tun" ],
     "postStartCommand": ".github/install.sh",
 
+    "overrideCommand": false,
+	"privileged": true,
+    "remoteUser": "gbraad",
+
     "customizations": {
         "vscode": {
             "extensions": [
