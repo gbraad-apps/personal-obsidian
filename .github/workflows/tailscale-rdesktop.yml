@@ -9,7 +9,9 @@ jobs:
     steps:
       - name: Run system container with `podman`
         run: |
-          podman run -d --name rdesktop ghcr.io/gbraad-apps/obsidian:latest
+          podman run -d --name rdesktop \
+            --cap-add=NET_ADMIN --cap-add=NET_RAW --device=/dev/net/tun --device=/dev/fuse \
+            ghcr.io/gbraad-apps/obsidian:latest
       - name: Tailscale setup (root)
         run: |
           until podman exec rdesktop tailscale up --auth-key ${TAILSCALE_AUTHKEY} --hostname github-${HOSTNAME}

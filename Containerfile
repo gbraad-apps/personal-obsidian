@@ -3,16 +3,19 @@ ARG BASE_VERSION=41
 
 FROM ${BASE_IMAGE}:${BASE_VERSION}
 
-USER gbraad
+USER root
 
-RUN mkdir -p ~/Downloads ~/Applications \
-    && cd ~/Downloads \
+RUN cd /tmp \
     && wget https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/Obsidian-1.7.7.AppImage \
     && chmod +x Obsidian-1.7.7.AppImage \
     && ./Obsidian-1.7.7.AppImage --appimage-extract \
-    && mv squashfs-root ~/Applications/Obsidian \
+    && mv squashfs-root /opt/obsidian \
     && rm -f Obsidian-1.7.7.AppImage \
-    && echo "exec ~/Applications/Obsidian/obsidian --no-sandbox" >> ~/.config/i3/config
+    && find /opt/obsidian -type d -exec chmod 755 {} \;
+
+USER gbraad
+
+RUN echo "exec /opt/obsidian/obsidian --no-sandbox" >> $HOME/.config/i3/config
 
 USER root
 # ensure to become root for systemd

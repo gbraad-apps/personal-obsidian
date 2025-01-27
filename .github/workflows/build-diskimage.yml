@@ -1,5 +1,5 @@
-name: build diskimages (bootc)
-run-name: building diskimages (bootc)
+name: build diskimage (bootc)
+run-name: building diskimage (bootc)
 
 on:
   workflow_dispatch:
