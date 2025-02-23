@@ -3,7 +3,7 @@ ARG BASE_VERSION=41
 
 FROM ${BASE_IMAGE}:${BASE_VERSION}
 
-ARG VERSION=1.8.4
+ARG VERSION=1.8.7
 
 USER root
 
@@ -16,5 +16,6 @@ RUN cd /tmp \
     && find /opt/obsidian -type d -exec chmod 755 {} \; \
     && git config -f /etc/rdesktop/rdesktop.ini rdesktop.title "Personal Obsidian ${VERSION}" \
     && git config -f /etc/rdesktop/rdesktop.ini rdesktop.exec "/opt/obsidian/obsidian --no-sandbox"
+
 # ensure to become root for systemd
 #ENTRYPOINT ["/sbin/init"]

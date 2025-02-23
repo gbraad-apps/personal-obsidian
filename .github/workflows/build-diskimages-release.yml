@@ -3,6 +3,8 @@ run-name: building diskimage (bootc)
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 */2 * *"
 
 env:
     IMAGE_NAME: ghcr.io/gbraad-apps/obsidian-bootc:latest
@@ -65,10 +67,13 @@ jobs:
           --local \
           ${{ env.IMAGE_NAME }}
 
+    - name: Set release tag
+      run: echo "TAG=$(date +'%y%m%d')" >> $GITHUB_ENV
+
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
       with:
-        tag: latest
-        name: Latest
+        tag: ${{ env.TAG }}
+        name: Disk images (${{ env.TAG }})
         body: ${{ env.BODY }}
         artifacts: "output/bootiso/*.iso,./output/qcow2/*,"

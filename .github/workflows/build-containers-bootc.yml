@@ -1,9 +1,12 @@
 name: build container (bootc)
 run-name: building container (bootc)
+
 on:
   workflow_dispatch:
+
 jobs:
   build:
+    name: build-containers-bootc
     permissions:
       contents: read
       packages: write
@@ -12,16 +15,23 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-24.04
+          - ubuntu-latest
+
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        
       - name: Run podman build - Obsidian (bootc)
         run: |
           podman build -t ghcr.io/gbraad-apps/obsidian-bootc:latest \
             --build-arg=BASE_IMAGE="ghcr.io/gbraad-devenv/fedora/rdesktop-bootc" \
             --build-arg=BASE_VERSION=41 \
             -f Containerfile .
+
+      - name: Login to ghcr.io
+        run: |
+          podman login ghcr.io -u ${{ github.actor }} \
+            -p ${{ secrets.GITHUB_TOKEN }}            
       - name: Push image to ghcr.io - Obsidian (bootc)
         run: |
           podman push --creds=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
