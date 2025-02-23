@@ -1,0 +1,66 @@
+name: build process
+run-name: Build process
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+  pull_request: {}
+
+jobs:
+
+  trigger-build-containers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start containers build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-containers.yml',
+              ref: context.ref,
+            });
+
+
+  trigger-build-containers-bootc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start bootc containers build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-containers-bootc.yml',
+              ref: context.ref,
+            });
+
+
+  wait-for-build-containers:
+    runs-on: ubuntu-latest
+    needs: trigger-build-containers
+    steps:
+      - name: Wait for build-containers to complete
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }} 
+          check-name: 'build-containers (ubuntu-latest)'
+          wait-interval: 10
+
+
+  wait-for-build-containers-bootc:
+    runs-on: ubuntu-latest
+    needs: trigger-build-containers-bootc
+    steps:
+      - name: Wait for build-container--bootc to complete
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          check-name: 'build-containers-bootc (ubuntu-latest)'
+          wait-interval: 10
