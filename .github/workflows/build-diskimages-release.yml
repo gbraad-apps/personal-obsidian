@@ -67,6 +67,9 @@ jobs:
           --local \
           ${{ env.IMAGE_NAME }}
 
+    - name: Split output result
+      run: sudo split -b 1800M --numeric-suffixes=0 --suffix-length=1 ./output/qcow2/disk.qcow2 ./output/qcow2/disk.qcow2_part
+
     - name: Set release tag
       run: echo "TAG=$(date +'%y%m%d')" >> $GITHUB_ENV
 
