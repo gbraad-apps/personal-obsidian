@@ -1,14 +1,14 @@
-name: tailscale-rdesktop
+name: tailscale-rdesktop-warpbuild
 
 on:
   workflow_dispatch:
 
 jobs:
   rdesktop-test:
-    name: Tailscale SSH Machine - GitHub
+    name: Tailscale SSH Machine - WarpBuild
     uses: ./.github/workflows/reusable-tailscale-rdesktop.yml
     with:
-      runs-on: "ubuntu-latest"
+      runs-on: "warp-ubuntu-latest-x64-2x"
       image: "ghcr.io/gbraad-apps/obsidian:latest"
       hostname: "apps-obsidian"
     secrets: inherit

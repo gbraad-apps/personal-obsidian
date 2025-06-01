@@ -1,0 +1,58 @@
+name: tailscale-rdesktop
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: "Container image to run"
+        required: true
+        type: string
+      runs-on:
+        description: "Target runner"
+        required: true
+        type: string
+        default: "ubuntu-latest"
+      hostname:
+        description: "Hostname for container image"
+        required: false
+        type: string
+        default: "rdesktop"
+
+jobs:
+  rdesktop-test:
+    runs-on: ${{ inputs.runs-on }}
+    
+    steps:
+
+      - name: Enable linger and start user session (workaround)
+        uses: gbraad-actions/blacksmith-user-session@main
+
+      - name: WarpBuild Unprivileged userns (workaround)
+        uses: gbraad-actions/warpbuild-unprivileged-userns@main
+
+      - name: Run system container with `podman`
+        run: |
+          podman run -d --name rdesktop --hostname ${{ inputs.hostname }} \
+            --privileged \
+            --cap-add=NET_ADMIN --cap-add=NET_RAW --device=/dev/net/tun --device=/dev/fuse \
+            ${{ inputs.image }}
+      - name: Tailscale setup (root)
+        run: |
+          until podman exec rdesktop tailscale up --auth-key ${TAILSCALE_AUTHKEY} --hostname ${{ inputs.hostname }}
+          do
+              sleep 0.1
+          done
+          podman exec rdesktop tailscale set --ssh
+          podman exec rdesktop chmod 640 /etc/shadow
+        env:
+          TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY}}
+
+      - name: Hang around
+        run: |
+          until podman exec rdesktop systemctl is-active kasmvncserver
+          do
+               sleep 1
+          done
+          IP=`podman exec rdesktop tailscale ip -4`
+          echo "Open in your web browser: https://${IP}:8444"
+          sleep infinity
