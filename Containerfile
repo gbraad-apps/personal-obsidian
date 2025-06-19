@@ -9,7 +9,7 @@ RUN cd /tmp \
     && VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') \
     && wget https://github.com/obsidianmd/obsidian-releases/releases/download/${VERSION}/Obsidian-${VERSION#v}.AppImage \
     && chmod +x Obsidian-${VERSION#v}.AppImage \
-    && ./Obsidian-${VERSION}.AppImage --appimage-extract \
+    && ./Obsidian-${VERSION#v}.AppImage --appimage-extract \
     && mv squashfs-root /opt/obsidian \
     && rm -f Obsidian-${VERSION#v}.AppImage \
     && find /opt/obsidian -type d -exec chmod 755 {} \; \
