@@ -1,0 +1,34 @@
+ARG BASE_IMAGE="ghcr.io/gbraad-devenv/fedora/xpra"
+ARG BASE_VERSION="42"
+
+FROM ${BASE_IMAGE}:${BASE_VERSION}
+
+USER root
+
+RUN cd /tmp \
+    && VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') \
+    && wget https://github.com/obsidianmd/obsidian-releases/releases/download/${VERSION}/Obsidian-${VERSION#v}.AppImage \
+    && chmod +x Obsidian-${VERSION#v}.AppImage \
+    && ./Obsidian-${VERSION#v}.AppImage --appimage-extract \
+    && mv squashfs-root /opt/obsidian \
+    && rm -f Obsidian-${VERSION#v}.AppImage \
+    && find /opt/obsidian -type d -exec chmod 755 {} \;
+
+# xpra start script: starts xpra serving Obsidian on port 14500
+RUN cat <<'EOF' > /usr/bin/obsidian-xpra
+#!/bin/sh
+exec xpra start \
+    --bind-tcp=0.0.0.0:14500 \
+    --html=on \
+    --daemon=no \
+    --start="/opt/obsidian/obsidian --no-sandbox" \
+    --exit-with-children=yes \
+    --title="Personal Obsidian"
+EOF
+RUN chmod +x /usr/bin/obsidian-xpra
+
+EXPOSE 14500
+
+USER gbraad
+
+CMD ["/usr/bin/obsidian-xpra"]
